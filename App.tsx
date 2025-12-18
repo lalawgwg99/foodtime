@@ -154,21 +154,60 @@ const App: React.FC = () => {
             )}
 
             {!state.isAnalyzing && state.batchResults.length === 0 && (
-              <div onClick={() => fileInputRef.current?.click()} className="w-full aspect-video border-4 border-dashed border-indigo-200 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all group mt-8 shadow-inner bg-white">
-                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm text-indigo-600">
-                  <i className="fas fa-brain text-2xl"></i>
+              <>
+                <div onClick={() => fileInputRef.current?.click()} className="w-full aspect-video border-4 border-dashed border-indigo-200 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all group mt-8 shadow-inner bg-white">
+                  <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm text-indigo-600">
+                    <i className="fas fa-brain text-2xl"></i>
+                  </div>
+                  <span className="mt-4 font-black text-indigo-700">深度掃描食品日期</span>
+                  <p className="text-xs text-slate-400 mt-1 font-medium">支援民國年、日式、國際格式模糊比對</p>
+                  <div className="mt-3 flex flex-col items-center opacity-60">
+                    <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
+                    <span className="text-[8px] font-mono font-bold text-slate-300">v1.0.0 PRO PROTOTYPE</span>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">搜尋驗證</span>
+                    <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">多張併行</span>
+                  </div>
                 </div>
-                <span className="mt-4 font-black text-indigo-700">深度掃描食品日期</span>
-                <p className="text-xs text-slate-400 mt-1 font-medium">支援民國年、日式、國際格式模糊比對</p>
-                <div className="mt-3 flex flex-col items-center opacity-60">
-                  <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
-                  <span className="text-[8px] font-mono font-bold text-slate-300">v1.0.0 PRO PROTOTYPE</span>
+
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pt-4">
+                  {/* 使用指南 */}
+                  <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-100 shadow-sm">
+                    <h3 className="text-xs font-black text-slate-800 flex items-center gap-2 mb-3">
+                      <i className="fas fa-magic text-indigo-500"></i> 極速使用指南
+                    </h3>
+                    <div className="grid grid-cols-1 gap-3">
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center text-[10px] font-bold text-indigo-600 shrink-0">1</div>
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          <span className="font-bold text-slate-700">加入主畫面</span>：手機瀏覽器點選「分享」或「選單」，選擇<span className="text-indigo-600 font-black">「加入主畫面」</span>即可像 App 一樣秒開。
+                        </p>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center text-[10px] font-bold text-indigo-600 shrink-0">2</div>
+                        <p className="text-[11px] text-slate-500 leading-relaxed">
+                          <span className="font-bold text-slate-700">批量拍照</span>：點擊藍色按鈕可一次選多張圖或連續拍攝。
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 功能亮點 */}
+                  <div className="grid grid-cols-2 gap-3 pb-8">
+                    <div className="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-2xl border border-indigo-100/50">
+                      <i className="fas fa-bolt text-indigo-500 mb-2"></i>
+                      <h4 className="text-[11px] font-black text-slate-800">閃電辨識</h4>
+                      <p className="text-[9px] text-slate-400 mt-1">Gemini 2.0 Flash 引擎，一秒抓取日期</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-emerald-50 to-white p-4 rounded-2xl border border-emerald-100/50">
+                      <i className="fas fa-layer-group text-emerald-500 mb-2"></i>
+                      <h4 className="text-[11px] font-black text-slate-800">萬能相容</h4>
+                      <p className="text-[9px] text-slate-400 mt-1">支援民國、日式、歐美等多國格式</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-4 flex gap-2">
-                  <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">搜尋驗證</span>
-                  <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">多張併行</span>
-                </div>
-              </div>
+              </>
             )}
 
             {state.isAnalyzing && (
