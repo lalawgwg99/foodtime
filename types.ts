@@ -24,9 +24,9 @@ export interface AppState {
   batchResults: ExpiryAnalysis[];
   isAnalyzing: boolean;
   error: string | null;
-  view: 'scanner' | 'history' | 'live'; // 新增：live 模式
+  view: 'scanner' | 'history';
   savedProducts: ScannedProduct[];
   notificationsEnabled: boolean;
   analysisProgress?: string;
-  liveScanResults: ExpiryAnalysis[]; // 新增：AR 模式下掃描到的暫存結果
 }
+

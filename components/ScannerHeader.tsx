@@ -2,9 +2,9 @@
 import React from 'react';
 
 interface ScannerHeaderProps {
-    view: 'scanner' | 'history' | 'live';
+    view: 'scanner' | 'history';
     savedCount: number;
-    setView: (view: 'scanner' | 'history' | 'live') => void;
+    setView: (view: 'scanner' | 'history') => void;
 }
 
 const ScannerHeader: React.FC<ScannerHeaderProps> = ({ view, savedCount, setView }) => {
