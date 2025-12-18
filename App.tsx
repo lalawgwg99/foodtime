@@ -164,6 +164,10 @@ const App: React.FC = () => {
                   <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">搜尋驗證</span>
                   <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">多張併行</span>
                 </div>
+                <div className="absolute bottom-4 right-6 flex flex-col items-end opacity-40">
+                  <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
+                  <span className="text-[8px] font-mono font-bold text-slate-300">v1.0.0 PRO PROTOTYPE</span>
+                </div>
               </div>
             )}
 
