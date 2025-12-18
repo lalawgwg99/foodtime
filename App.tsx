@@ -10,7 +10,7 @@ import { compressImage } from './utils/imageUtils';
 import ScannerHeader from './components/ScannerHeader';
 import ResultCard from './components/ResultCard';
 import LiveScanner from './components/LiveScanner'; // 新增
-import { playScanSound, playAlertSound } from './utils/soundUtils';
+import { playScanSound, playAlertSound, unlockAudio } from './utils/soundUtils';
 
 const STORAGE_KEY = 'taiwan_food_expiry_history_v2';
 const NOTIFICATION_KEY = 'taiwan_food_notif_enabled';
@@ -187,7 +187,10 @@ const App: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 mt-8">
                   {/* 左邊：照片模式 */}
                   <div
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => {
+                      unlockAudio();
+                      fileInputRef.current?.click();
+                    }}
                     className="aspect-square bg-white border-2 border-indigo-100 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all group shadow-sm"
                   >
                     <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform text-indigo-600 mb-3">
@@ -199,7 +202,10 @@ const App: React.FC = () => {
 
                   {/* 右邊：雷達模式 */}
                   <div
-                    onClick={() => setState(prev => ({ ...prev, view: 'live' }))}
+                    onClick={() => {
+                      unlockAudio();
+                      setState(prev => ({ ...prev, view: 'live' }));
+                    }}
                     className="aspect-square bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:brightness-110 transition-all group shadow-lg overflow-hidden relative"
                   >
                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform text-white mb-3 z-10">

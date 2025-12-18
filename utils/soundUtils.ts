@@ -10,7 +10,21 @@ const getAudioContext = () => {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
+    // 確保 Context 是啟動狀態 (現代瀏覽器安全性要求)
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
     return audioCtx;
+};
+
+/**
+ * 在使用者第一次互動時呼叫，解除瀏覽器音效鎖定
+ */
+export const unlockAudio = () => {
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') {
+        ctx.resume();
+    }
 };
 
 /**
@@ -26,14 +40,14 @@ export const playScanSound = () => {
         osc.frequency.setValueAtTime(880, ctx.currentTime); // 高音 A5
 
         gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.01); // 提高音量到 0.4
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
 
         osc.start();
-        osc.stop(ctx.currentTime + 0.1);
+        osc.stop(ctx.currentTime + 0.15);
     } catch (e) {
         console.warn("Audio play failed:", e);
     }
@@ -55,14 +69,14 @@ export const playAlertSound = () => {
             osc.frequency.setValueAtTime(440, ctx.currentTime + delay); // 低音 A4
 
             gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-            gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + delay + 0.01);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + 0.15);
+            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + delay + 0.01); // 提高音量到 0.3
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + 0.2);
 
             osc.connect(gain);
             gain.connect(ctx.destination);
 
             osc.start(ctx.currentTime + delay);
-            osc.stop(ctx.currentTime + delay + 0.15);
+            osc.stop(ctx.currentTime + delay + 0.2);
         });
     } catch (e) {
         console.warn("Audio play failed:", e);
