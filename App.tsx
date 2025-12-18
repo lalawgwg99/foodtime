@@ -9,6 +9,7 @@ import { compressImage } from './utils/imageUtils';
 // Components
 import ScannerHeader from './components/ScannerHeader';
 import ResultCard from './components/ResultCard';
+import LiveScanner from './components/LiveScanner'; // 新增
 import { playScanSound, playAlertSound } from './utils/soundUtils';
 
 const STORAGE_KEY = 'taiwan_food_expiry_history_v2';
@@ -25,6 +26,7 @@ const App: React.FC = () => {
       view: 'scanner',
       savedProducts: saved ? JSON.parse(saved) : [],
       notificationsEnabled: notif === 'true',
+      liveScanResults: [] // 新增
     };
   });
 
@@ -152,6 +154,24 @@ const App: React.FC = () => {
         setView={(v) => setState(prev => ({ ...prev, view: v }))}
       />
 
+      {state.view === 'live' && (
+        <LiveScanner
+          onCapture={(results) => {
+            // 背景已處理音效與去重，此處僅更新狀態中累計的 liveScanResults
+            setState(prev => ({ ...prev, liveScanResults: [...prev.liveScanResults, ...results] }));
+          }}
+          onClose={(finalResults) => {
+            // 結束後，將結果轉為 batchResults 並切換回普通掃描視圖顯示報告
+            setState(prev => ({
+              ...prev,
+              view: 'scanner',
+              batchResults: finalResults,
+              liveScanResults: []
+            }));
+          }}
+        />
+      )}
+
       <main className="w-full max-w-md px-4 flex-1">
         {state.view === 'scanner' ? (
           <div className="space-y-6">
@@ -215,6 +235,23 @@ const App: React.FC = () => {
                       <p className="text-[9px] text-slate-400 mt-1">支援民國、日式、歐美等多國格式</p>
                     </div>
                   </div>
+
+                  {/* AR 模式入口 */}
+                  <button
+                    onClick={() => setState(prev => ({ ...prev, view: 'live' }))}
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-[28px] shadow-lg transition-all group flex items-center justify-between overflow-hidden relative"
+                  >
+                    <div className="flex flex-col items-start z-10 text-left">
+                      <span className="text-[10px] font-black text-indigo-200 tracking-widest uppercase mb-1">體驗最強功能</span>
+                      <h3 className="text-lg font-black leading-tight">AR 連續攝影掃描</h3>
+                      <p className="text-white/60 text-xs mt-1">拿著手機走過貨架，自動嗶、自動記</p>
+                    </div>
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                      <i className="fas fa-camera-rotate animate-pulse"></i>
+                    </div>
+                    {/* 背景動效裝飾 */}
+                    <div className="absolute right-[-10%] bottom-[-20%] w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                  </button>
                 </div>
               </>
             )}
