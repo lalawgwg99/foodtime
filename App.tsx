@@ -9,6 +9,7 @@ import { compressImage } from './utils/imageUtils';
 // Components
 import ScannerHeader from './components/ScannerHeader';
 import ResultCard from './components/ResultCard';
+import { playScanSound, playAlertSound } from './utils/soundUtils';
 
 const STORAGE_KEY = 'taiwan_food_expiry_history_v2';
 const NOTIFICATION_KEY = 'taiwan_food_notif_enabled';
@@ -96,6 +97,14 @@ const App: React.FC = () => {
         });
 
         if (results && results.length > 0) {
+          // 播放掃描音效
+          playScanSound();
+
+          // 若偵測到過期商品，播放警示音
+          if (results.some(r => r.isExpired)) {
+            playAlertSound();
+          }
+
           setState(prev => ({
             ...prev,
             batchResults: [...prev.batchResults, ...results]
