@@ -190,13 +190,13 @@ const App: React.FC = () => {
                       <div className="flex items-start gap-3">
                         <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center text-[10px] font-bold text-indigo-600 shrink-0">1</div>
                         <p className="text-[11px] text-slate-500 leading-relaxed">
-                          <span className="font-bold text-slate-700">加入主畫面</span>：手機瀏覽器點選「分享」或「選單」，選擇<span className="text-indigo-600 font-black">「加入主畫面」</span>即可像 App 一樣秒開。
+                          <span className="font-bold text-slate-700">加入主畫面</span>：在手機瀏覽器點選「分享」或「選單」，點擊<span className="text-indigo-600 font-black">「加入主畫面」</span>即可快速生成桌面圖示。
                         </p>
                       </div>
                       <div className="flex items-start gap-3">
                         <div className="w-5 h-5 bg-indigo-100 rounded-full flex items-center justify-center text-[10px] font-bold text-indigo-600 shrink-0">2</div>
                         <p className="text-[11px] text-slate-500 leading-relaxed">
-                          <span className="font-bold text-slate-700">批量拍照</span>：點擊藍色按鈕可一次選多張圖或連續拍攝。
+                          <span className="font-bold text-slate-700">多商品辨識</span>：即使一張照片拍到多個商品，AI 也能自動將它們拆分，不用一張一張分開拍。
                         </p>
                       </div>
                     </div>
