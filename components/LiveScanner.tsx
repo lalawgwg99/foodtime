@@ -48,64 +48,63 @@ const LiveScanner: React.FC<LiveScannerProps> = ({ onCapture, onClose }) => {
         if (!isScanning) return;
 
         const interval = setInterval(async () => {
-            if (isAnalyzingFrame) return; // Prevent overlapping requests
-
+            // 不再阻塞，允許並發發送
             if (videoRef.current && canvasRef.current) {
                 const video = videoRef.current;
                 const canvas = canvasRef.current;
                 const context = canvas.getContext('2d');
 
                 if (context && video.videoWidth > 0) {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
+                    // 降低解析度到 640px 以節省流量與提高速度
+                    const scale = 640 / video.videoWidth;
+                    canvas.width = 640;
+                    canvas.height = video.videoHeight * scale;
                     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                    const base64Image = canvas.toDataURL('image/jpeg', 0.6);
+                    const base64Image = canvas.toDataURL('image/jpeg', 0.5); // 降低品質
 
-                    try {
-                        setIsAnalyzingFrame(true);
-                        const results = await analyzeExpiry(base64Image, 'fast');
+                    // 非阻塞異步調用 (Fire and forget concurrent process)
+                    (async () => {
+                        try {
+                            setIsAnalyzingFrame(true);
+                            const results = await analyzeExpiry(base64Image, 'radar');
 
-                        if (results && results.length > 0) {
-                            const newItems: ExpiryAnalysis[] = [];
+                            if (results && results.length > 0) {
+                                const newItems: ExpiryAnalysis[] = [];
+                                results.forEach(res => {
+                                    const uniqueKey = `${res.productName}-${res.expiryDate || res.storageDuration}`;
+                                    if (!seenProducts.has(uniqueKey) && (res.expiryDate || res.storageDuration)) {
+                                        seenProducts.add(uniqueKey);
+                                        newItems.push(res);
+                                    }
+                                });
 
-                            results.forEach(res => {
-                                const uniqueKey = `${res.productName}-${res.expiryDate || res.storageDuration}`;
-                                // 僅針對有明確日期或保存期限的有效項目進行計數
-                                if (!seenProducts.has(uniqueKey) && (res.expiryDate || res.storageDuration)) {
-                                    seenProducts.add(uniqueKey);
-                                    newItems.push(res);
+                                if (newItems.length > 0) {
+                                    playScanSound();
+                                    if (newItems.some(item => item.isExpired)) playAlertSound();
+
+                                    setCapturedCount(prev => prev + newItems.length);
+                                    setPlusText(`+${newItems.length}`);
+                                    setShowPlusOne(true);
+                                    setTimeout(() => setShowPlusOne(false), 800);
+
+                                    setAllCapturedResults(prev => [...prev, ...newItems]);
+                                    onCapture(newItems);
                                 }
-                            });
-
-                            if (newItems.length > 0) {
-                                // 觸發音效
-                                playScanSound();
-                                if (newItems.some(item => item.isExpired)) {
-                                    playAlertSound();
-                                }
-
-                                // 觸發 +N 動效
-                                setCapturedCount(prev => prev + newItems.length);
-                                setPlusText(`+${newItems.length}`);
-                                setShowPlusOne(true);
-                                setTimeout(() => setShowPlusOne(false), 1000);
-
-                                setAllCapturedResults(prev => [...prev, ...newItems]);
-                                onCapture(newItems);
                             }
+                        } catch (err) {
+                            console.warn("Radar scan skip:", err);
+                        } finally {
+                            // 這裡的狀態僅用於指示「目前後台有任務在跑」
+                            setIsAnalyzingFrame(false);
                         }
-                    } catch (err) {
-                        console.error("Auto scan error:", err);
-                    } finally {
-                        setIsAnalyzingFrame(false);
-                    }
+                    })();
                 }
             }
-        }, 2200); // 縮短間隔，配合 Flash 模型速度
+        }, 1300); // 縮短到 1.3 秒連發
 
         return () => clearInterval(interval);
-    }, [isScanning, isAnalyzingFrame, seenProducts, onCapture]);
+    }, [isScanning, seenProducts, onCapture]);
 
     return (
         <div className="fixed inset-0 bg-black z-50 flex flex-col">

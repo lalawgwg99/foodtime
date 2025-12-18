@@ -6,26 +6,41 @@ import { ExpiryAnalysis } from "../types";
  * 分析食品包裝日期
  * 支援單張照片識別多個商品，並偵測相對保存期限
  */
-export const analyzeExpiry = async (base64Image: string, mode: 'fast' | 'deep' = 'fast'): Promise<ExpiryAnalysis[]> => {
+export const analyzeExpiry = async (base64Image: string, mode: 'fast' | 'deep' | 'radar' = 'fast'): Promise<ExpiryAnalysis[]> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+  const isRadar = mode === 'radar';
   const modelName = mode === 'deep' ? 'gemini-3-pro-preview' : 'gemini-2.0-flash-exp';
 
-  const prompt = `
+  const prompt = isRadar
+    ? `【極速雷達模式】僅識別食品名稱與有效日期。輸出繁體中文 JSON 陣列。`
+    : `
     你是一位極速食品標籤掃描助手。這張圖片可能包含【一個或多個】食品包裝。
-    
-    【核心任務】
-    1. 【多商品偵測】：識別圖片中出現的所有獨立食品及其日期標籤。
+    1. 【多商品偵測】：識別圖片中所有獨立食品及其日期標籤。
     2. 【日期抓取】：提取「製造日期(MFG)」與「有效日期(EXP)」。支援民國年、和曆、西洋年。
-    3. 【相對期限偵測】：如果包裝上只有「保存期限：X個月/天」而沒有印具體的「有效日期」，請務必抓取該資訊並填入 storageDuration。
-    4. 【提示邏輯】：若 expiryDate 為空但有 storageDuration，請在 dateAmbiguityWarning 提醒用戶需要手動根據製造日期推算。
-    
-    【格式規範】：
-    - 統一輸出西元 YYYY-MM-DD。
-    - 若非食品，請跳過。
-
-    輸出語系：繁體中文。請返回一個 JSON 陣列 [{}, {}]。
+    3. 【相對期限】：抓取「保存期限：X個月/天」填入 storageDuration。
+    返回 JSON 陣列 [{}, {}]。輸出語系：繁體中文。
   `;
+
+  // 根據模式縮減 Schema
+  const properties: any = {
+    isFoodProduct: { type: Type.BOOLEAN },
+    productName: { type: Type.STRING },
+    expiryDate: { type: Type.STRING }
+  };
+
+  if (!isRadar) {
+    Object.assign(properties, {
+      origin: { type: Type.STRING },
+      manufactureDate: { type: Type.STRING },
+      storageDuration: { type: Type.STRING },
+      isExpired: { type: Type.BOOLEAN },
+      rawTextFound: { type: Type.STRING },
+      confidence: { type: Type.STRING, enum: ["high", "medium", "low"] },
+      summary: { type: Type.STRING },
+      dateAmbiguityWarning: { type: Type.STRING }
+    });
+  }
 
   const config: any = {
     responseMimeType: "application/json",
@@ -33,20 +48,8 @@ export const analyzeExpiry = async (base64Image: string, mode: 'fast' | 'deep' =
       type: Type.ARRAY,
       items: {
         type: Type.OBJECT,
-        properties: {
-          isFoodProduct: { type: Type.BOOLEAN, description: "是否為食品" },
-          productName: { type: Type.STRING, description: "產品名稱" },
-          origin: { type: Type.STRING, description: "產地" },
-          manufactureDate: { type: Type.STRING, description: "製造日期 (YYYY-MM-DD)" },
-          expiryDate: { type: Type.STRING, description: "有效日期 (YYYY-MM-DD)" },
-          storageDuration: { type: Type.STRING, description: "保存期限 (如: 12個月)" },
-          isExpired: { type: Type.BOOLEAN, description: "是否已過期" },
-          rawTextFound: { type: Type.STRING, description: "原始日期文字" },
-          confidence: { type: Type.STRING, enum: ["high", "medium", "low"] },
-          summary: { type: Type.STRING, description: "辨識邏輯" },
-          dateAmbiguityWarning: { type: Type.STRING, description: "警告或提醒" }
-        },
-        required: ["isFoodProduct"]
+        properties,
+        required: ["isFoodProduct", "productName"]
       }
     }
   };
