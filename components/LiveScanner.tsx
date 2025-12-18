@@ -55,13 +55,13 @@ const LiveScanner: React.FC<LiveScannerProps> = ({ onCapture, onClose }) => {
                 const context = canvas.getContext('2d');
 
                 if (context && video.videoWidth > 0) {
-                    // 降低解析度到 640px 以節省流量與提高速度
-                    const scale = 640 / video.videoWidth;
-                    canvas.width = 640;
+                    // 提高解析度到 800px 以確保能看清紅燒牛肉麵這類精細日期
+                    const scale = 800 / video.videoWidth;
+                    canvas.width = 800;
                     canvas.height = video.videoHeight * scale;
                     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                    const base64Image = canvas.toDataURL('image/jpeg', 0.5); // 降低品質
+                    const base64Image = canvas.toDataURL('image/jpeg', 0.6); // 提高品質確保清晰度
 
                     // 非阻塞異步調用 (Fire and forget concurrent process)
                     (async () => {

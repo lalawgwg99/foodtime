@@ -13,7 +13,7 @@ export const analyzeExpiry = async (base64Image: string, mode: 'fast' | 'deep' |
   const modelName = mode === 'deep' ? 'gemini-3-pro-preview' : 'gemini-2.0-flash-exp';
 
   const prompt = isRadar
-    ? `【極速雷達模式】僅識別食品名稱與有效日期。輸出繁體中文 JSON 陣列。`
+    ? `【極速雷達模式】掃描圖片中的「有效日期/EXP」。忽略其他文字。輸出繁體中文 JSON 陣列。包含 productName 與 expiryDate。`
     : `
     你是一位極速食品標籤掃描助手。這張圖片可能包含【一個或多個】食品包裝。
     1. 【多商品偵測】：識別圖片中所有獨立食品及其日期標籤。
