@@ -87,7 +87,8 @@ const App: React.FC = () => {
           reader.onloadend = async () => {
             try {
               const base64 = reader.result as string;
-              const compressedBase64 = await compressImage(base64);
+              // 拍照模式採用更高解析度 (2000px) 與品質 (0.9) 以應對極小字體
+              const compressedBase64 = await compressImage(base64, 2000, 0.9);
               const analysisArray = await analyzeExpiry(compressedBase64, 'fast');
               resolve(analysisArray);
             } catch (err) {
