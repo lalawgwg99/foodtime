@@ -160,13 +160,13 @@ const App: React.FC = () => {
                 </div>
                 <span className="mt-4 font-black text-indigo-700">深度掃描食品日期</span>
                 <p className="text-xs text-slate-400 mt-1 font-medium">支援民國年、日式、國際格式模糊比對</p>
+                <div className="mt-3 flex flex-col items-center opacity-60">
+                  <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
+                  <span className="text-[8px] font-mono font-bold text-slate-300">v1.0.0 PRO PROTOTYPE</span>
+                </div>
                 <div className="mt-4 flex gap-2">
                   <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">搜尋驗證</span>
                   <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">多張併行</span>
-                </div>
-                <div className="absolute bottom-4 right-6 flex flex-col items-end opacity-40">
-                  <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
-                  <span className="text-[8px] font-mono font-bold text-slate-300">v1.0.0 PRO PROTOTYPE</span>
                 </div>
               </div>
             )}
