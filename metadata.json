@@ -1,0 +1,7 @@
+{
+  "name": "Food Expiry Scanner",
+  "description": "Scan Taiwan food packaging to automatically identify manufacture/expiry dates (including Minguo calendar) and get expiry warnings.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
