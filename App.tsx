@@ -184,20 +184,37 @@ const App: React.FC = () => {
 
             {!state.isAnalyzing && state.batchResults.length === 0 && (
               <>
-                <div onClick={() => fileInputRef.current?.click()} className="w-full aspect-video border-4 border-dashed border-indigo-200 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all group mt-8 shadow-inner bg-white">
-                  <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm text-indigo-600">
-                    <i className="fas fa-brain text-2xl"></i>
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  {/* 左邊：照片模式 */}
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="aspect-square bg-white border-2 border-indigo-100 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all group shadow-sm"
+                  >
+                    <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform text-indigo-600 mb-3">
+                      <i className="fas fa-camera text-xl"></i>
+                    </div>
+                    <span className="font-black text-indigo-700 text-sm">拍照/選圖</span>
+                    <span className="text-[10px] text-slate-400 mt-1">單張、多圖</span>
                   </div>
-                  <span className="mt-4 font-black text-indigo-700">深度掃描食品日期</span>
-                  <p className="text-xs text-slate-400 mt-1 font-medium">支援民國年、日式、國際格式模糊比對</p>
-                  <div className="mt-3 flex flex-col items-center opacity-60">
-                    <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
-                    <span className="text-[8px] font-mono font-bold text-slate-300">v1.0.0 PRO PROTOTYPE</span>
+
+                  {/* 右邊：雷達模式 */}
+                  <div
+                    onClick={() => setState(prev => ({ ...prev, view: 'live' }))}
+                    className="aspect-square bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-[32px] flex flex-col items-center justify-center cursor-pointer hover:brightness-110 transition-all group shadow-lg overflow-hidden relative"
+                  >
+                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform text-white mb-3 z-10">
+                      <i className="fas fa-camera-rotate animate-pulse"></i>
+                    </div>
+                    <span className="font-black text-white text-sm z-10">AR 雷達掃描</span>
+                    <span className="text-[10px] text-white/60 mt-1 z-10">連續辨識、嗶嗶記</span>
+                    {/* 裝飾 */}
+                    <div className="absolute right-[-10%] bottom-[-10%] w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
                   </div>
-                  <div className="mt-4 flex gap-2">
-                    <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">搜尋驗證</span>
-                    <span className="text-[9px] font-bold text-slate-300 border border-slate-100 px-2 py-1 rounded">多張併行</span>
-                  </div>
+                </div>
+
+                <div className="mt-6 flex flex-col items-center opacity-30">
+                  <span className="text-[10px] font-black text-slate-400 tracking-widest">DESIGNED BY 德</span>
+                  <span className="text-[8px] font-mono font-bold text-slate-300">v1.1.0 AR PROTOTYPE</span>
                 </div>
 
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pt-4">
@@ -235,23 +252,6 @@ const App: React.FC = () => {
                       <p className="text-[9px] text-slate-400 mt-1">支援民國、日式、歐美等多國格式</p>
                     </div>
                   </div>
-
-                  {/* AR 模式入口 */}
-                  <button
-                    onClick={() => setState(prev => ({ ...prev, view: 'live' }))}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-[28px] shadow-lg transition-all group flex items-center justify-between overflow-hidden relative"
-                  >
-                    <div className="flex flex-col items-start z-10 text-left">
-                      <span className="text-[10px] font-black text-indigo-200 tracking-widest uppercase mb-1">體驗最強功能</span>
-                      <h3 className="text-lg font-black leading-tight">AR 連續攝影掃描</h3>
-                      <p className="text-white/60 text-xs mt-1">拿著手機走過貨架，自動嗶、自動記</p>
-                    </div>
-                    <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                      <i className="fas fa-camera-rotate animate-pulse"></i>
-                    </div>
-                    {/* 背景動效裝飾 */}
-                    <div className="absolute right-[-10%] bottom-[-20%] w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                  </button>
                 </div>
               </>
             )}
