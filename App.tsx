@@ -254,6 +254,16 @@ const App: React.FC = () => {
               </>
             )}
           </button>
+          <div className="mt-3 text-center">
+            <a
+              href="https://github.com/lalawgwg99/foodtime/blob/main/README.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] font-black text-slate-300 hover:text-indigo-500 transition-colors tracking-widest uppercase flex items-center justify-center gap-1.5"
+            >
+              <i className="fas fa-book-open"></i> View Documentation (README)
+            </a>
+          </div>
         </div>
       </footer>
       <input type="file" multiple ref={fileInputRef} onChange={handleFileChange} accept="image/*" capture="environment" className="hidden" />
