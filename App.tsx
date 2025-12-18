@@ -79,14 +79,14 @@ const App: React.FC = () => {
       setState(prev => ({ ...prev, analysisProgress: progress }));
 
       try {
-        const result = await new Promise<ExpiryAnalysis | null>((resolve) => {
+        const results = await new Promise<ExpiryAnalysis[] | null>((resolve) => {
           const reader = new FileReader();
           reader.onloadend = async () => {
             try {
               const base64 = reader.result as string;
               const compressedBase64 = await compressImage(base64);
-              const analysis = await analyzeExpiry(compressedBase64, 'fast');
-              resolve(analysis);
+              const analysisArray = await analyzeExpiry(compressedBase64, 'fast');
+              resolve(analysisArray);
             } catch (err) {
               resolve(null);
             }
@@ -95,10 +95,10 @@ const App: React.FC = () => {
           reader.readAsDataURL(file);
         });
 
-        if (result && result.isFoodProduct) {
+        if (results && results.length > 0) {
           setState(prev => ({
             ...prev,
-            batchResults: [...prev.batchResults, result]
+            batchResults: [...prev.batchResults, ...results]
           }));
         }
       } catch (err) {

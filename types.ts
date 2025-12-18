@@ -10,8 +10,9 @@ export interface ExpiryAnalysis {
   confidence: 'high' | 'medium' | 'low';
   summary: string;
   dateAmbiguityWarning?: string;
+  storageDuration?: string; // 新增：保存期限 (如 "12個月")
   groundingSources?: { title: string; uri: string }[];
-  isFoodProduct: boolean; // 新增：判斷是否為食品包裝
+  isFoodProduct: boolean;
 }
 
 export interface ScannedProduct extends ExpiryAnalysis {

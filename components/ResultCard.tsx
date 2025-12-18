@@ -97,6 +97,20 @@ const ResultCard: React.FC<ResultCardProps> = ({ item, isHistory = false, onSave
                     </div>
                 </div>
 
+                {item.storageDuration && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-[11px] text-blue-900 flex gap-2">
+                        <i className="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                        <span className="font-medium">標籤標示保存期限：<span className="font-black underline">{item.storageDuration}</span></span>
+                    </div>
+                )}
+
+                {(!editValues.expiryDate && item.storageDuration) && (
+                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-[11px] text-rose-900 flex gap-2 animate-pulse">
+                        <i className="fas fa-exclamation-circle text-rose-500 mt-0.5"></i>
+                        <span className="font-black leading-relaxed">注意：此商品僅標示保存期間，請根據「製造日期」手動推準並編輯有效日期。</span>
+                    </div>
+                )}
+
                 {item.dateAmbiguityWarning && !isEditing && (
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] text-amber-900 flex gap-2">
                         <i className="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
