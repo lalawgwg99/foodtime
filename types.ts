@@ -26,4 +26,5 @@ export interface AppState {
   view: 'scanner' | 'history';
   savedProducts: ScannedProduct[];
   notificationsEnabled: boolean;
+  analysisProgress?: string; // 新增：顯示批量處理進度 (如 "3/20")
 }

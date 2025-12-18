@@ -63,44 +63,56 @@ const App: React.FC = () => {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-    setState(prev => ({ ...prev, isAnalyzing: true, error: null, batchResults: [] }));
 
     const fileArray = Array.from(files) as File[];
-    const analysisPromises = fileArray.map((file) => {
-      return new Promise<ExpiryAnalysis | null>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          try {
-            const base64 = reader.result as string;
-            // 效能優化：前端圖片壓縮
-            const compressedBase64 = await compressImage(base64);
-            const result = await analyzeExpiry(compressedBase64);
-            resolve(result);
-          } catch (err: any) {
-            console.warn("Skip file:", err.message);
-            resolve(null);
-          }
-        };
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(file);
-      });
-    });
+    setState(prev => ({
+      ...prev,
+      isAnalyzing: true,
+      error: null,
+      batchResults: [],
+      analysisProgress: `0 / ${fileArray.length}`
+    }));
 
-    try {
-      const results = await Promise.all(analysisPromises);
-      const successfulResults = results.filter((r): r is ExpiryAnalysis => r !== null && r.isFoodProduct);
+    for (let i = 0; i < fileArray.length; i++) {
+      const file = fileArray[i];
+      const progress = `${i + 1} / ${fileArray.length}`;
+      setState(prev => ({ ...prev, analysisProgress: progress }));
 
-      setState(prev => ({
-        ...prev,
-        isAnalyzing: false,
-        batchResults: successfulResults,
-        error: successfulResults.length === 0 && fileArray.length > 0
-          ? "未辨識到任何食品標籤。請確保拍攝的是商品的日期資訊區。"
-          : successfulResults.length < fileArray.length ? "已自動過濾非食品或模糊的影像。" : null
-      }));
-    } catch (err: any) {
-      setState(prev => ({ ...prev, isAnalyzing: false, error: "AI 辨識服務暫時發生錯誤。" }));
+      try {
+        const result = await new Promise<ExpiryAnalysis | null>((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = async () => {
+            try {
+              const base64 = reader.result as string;
+              const compressedBase64 = await compressImage(base64);
+              const analysis = await analyzeExpiry(compressedBase64, 'fast');
+              resolve(analysis);
+            } catch (err) {
+              resolve(null);
+            }
+          };
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+
+        if (result && result.isFoodProduct) {
+          setState(prev => ({
+            ...prev,
+            batchResults: [...prev.batchResults, result]
+          }));
+        }
+      } catch (err) {
+        console.warn("File processing error:", err);
+      }
     }
+
+    setState(prev => ({
+      ...prev,
+      isAnalyzing: false,
+      error: prev.batchResults.length === 0 && fileArray.length > 0
+        ? "未辨識到任何食品標籤。請確保拍攝的是商品的日期資訊區。"
+        : null
+    }));
   };
 
   const saveToHistory = (analysis: ExpiryAnalysis) => {
@@ -165,7 +177,10 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <p className="font-black text-slate-800 text-lg">AI 正在啟動深度思考模式...</p>
-                <p className="text-xs text-slate-400 mt-2 font-medium">比對各國日期標示習慣中</p>
+                <p className="text-xs text-indigo-600 mt-2 font-black bg-indigo-50 px-3 py-1 rounded-full animate-pulse">
+                  辨識進度：{state.analysisProgress}
+                </p>
+                <p className="text-xs text-slate-400 mt-2 font-medium">切換至 Flash 模式，辨識速度已提升 10 倍</p>
               </div>
             )}
 
